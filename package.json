@@ -1,0 +1,45 @@
+{
+  "name": "WidgetApp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-navigation/bottom-tabs": "^6.5.0",
+    "@react-navigation/native": "^6.1.0",
+    "@react-navigation/stack": "^6.3.0",
+    "react": "18.3.1",
+    "react-native": "0.75.3",
+    "react-native-safe-area-context": "^4.10.1",
+    "react-native-screens": "^3.34.0",
+    "react-native-vector-icons": "^10.0.0",
+    "zustand": "^4.5.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "@react-native-community/cli": "latest",
+    "@react-native/babel-preset": "^0.75.3",
+    "@react-native/metro-config": "^0.75.3",
+    "@react-native/typescript-lib": "^0.75.3",
+    "@types/react": "^18.2.60",
+    "@types/react-native": "^0.75.0",
+    "babel-jest": "^29.2.0",
+    "babel-plugin-transform-import-meta": "^1.0.0",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "eslint": "^8.19.0",
+    "jest": "^29.2.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.2"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}

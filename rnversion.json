@@ -1,0 +1,8 @@
+{
+  "env": {
+    "MAJOR": 0,
+    "MINOR": 75,
+    "PATCH": 3,
+    "EXPO": false
+  }
+}
