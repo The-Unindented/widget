@@ -1,12 +1,3 @@
-const path = require('path');
-const { mergeConfig } = require('@react-native/metro-config');
+const { getDefaultConfig } = require('expo/metro-config');
 
-const defaultConfig = {
-  resolver: {
-    assetResolvers: {
-      assetExtensions: ['ttf', 'otf', 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'],
-    },
-  },
-};
-
-module.exports = mergeConfig(defaultConfig, {});
+module.exports = getDefaultConfig(__dirname);

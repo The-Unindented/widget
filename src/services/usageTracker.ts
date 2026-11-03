@@ -52,7 +52,7 @@ class UsageTracker {
       // Get currently running foreground app
       const foregroundApp = await this.getForegroundApp();
       
-      if (foregroundApp && foregroundApp !== this.getLastTrackedApp()) {
+      if (foregroundApp && foregroundApp.packageName !== this.getLastTrackedApp()) {
         // Increment click count for this app
         useUsageStore.getState().incrementAppClick(
           foregroundApp.packageName,

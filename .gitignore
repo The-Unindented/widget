@@ -1,0 +1,53 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE / editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Node / package manager
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Expo
+.expo/
+.expo-shared/
+
+# Metro bundler
+.metro/
+
+# iOS builds
+ios/build/
+ios/*.xcodeproj/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+.ios/
+
+# Android builds
+android/app/build/
+android/app/.externalNativeBuild/
+android/app/gen/
+android/gradle/
+android/local.properties
+.android/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# Misc
+.env
+.env.local
+.env.*.local

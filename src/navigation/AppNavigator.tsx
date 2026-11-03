@@ -1,20 +1,20 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {create-stack } from '@react-navigation/stack';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
 
-import DashboardScreen from '@/screens/Dashboard';
-import AppListScreen from '@/screens/AppList';
-import SettingsScreen from '@/screens/Settings';
+import { DashboardScreen } from '@/screens/Dashboard';
+import { AppListScreen } from '@/screens/AppList';
+import { SettingsScreen } from '@/screens/Settings';
 
 const Tab = createBottomTabNavigator();
-const Stack =create-stack';
+const Stack = createNativeStackNavigator();
 
 const DashboardStack = () => (
   <Stack.Navigator>
     <Stack.Screen
-      name="Dashboard"
+      name="DashboardHome"
       component={DashboardScreen}
       options={{ headerTitle: 'App Usage Tracker' }}
     />
@@ -34,7 +34,7 @@ const AppStack = () => (
 const SettingsStack = () => (
   <Stack.Navigator>
     <Stack.Screen
-      name="Settings"
+      name="SettingsHome"
       component={SettingsScreen}
       options={{ headerTitle: 'Settings' }}
     />
@@ -47,7 +47,7 @@ export const AppNavigator = () => {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+            let iconName: keyof typeof Ionicons.glyphMap = 'help-outline';
 
             if (route.name === 'Dashboard') {
               iconName = focused ? 'home' : 'home-outline';

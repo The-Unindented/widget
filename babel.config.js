@@ -1,26 +1,17 @@
-module.exports = {
-  presets: [
-    ['@react-native/babel-preset', { 
-      decorators: { 
-        legacy: false 
-      } 
-    }],
-  ],
-  plugins: [
-    [
-      'module-resolver',
-      {
-        alias: {
-          '@': './src',
+module.exports = function (api) {
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+    plugins: [
+      [
+        'module-resolver',
+        {
+          alias: {
+            '@': './src',
+          },
+          root: './src',
         },
-        root: './src',
-      },
+      ],
     ],
-    [
-      'babel-plugin-transform-import-meta',
-      {
-        jsExtensions: ['.js', '.ts', '.tsx'],
-      },
-    ],
-  ],
+  };
 };

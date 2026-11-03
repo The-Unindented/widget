@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppUsage, UsageStats, SortBy } from '@/types';
 
 interface UsageStore extends UsageStats {
+  sortBy: SortBy;
   // Actions
   incrementAppClick: (packageName: string, appName: string, icon?: string) => void;
   updateAppUsage: (packageName: string, timeSpent: number) => void;
@@ -97,7 +98,7 @@ export const useUsageStore = create<UsageStore>()(
         set({ sortBy });
       },
 
-      getTopApps: (limit: number = 3): AppUsage => {
+      getTopApps: (limit: number = 3): AppUsage[] => {
         const state = get();
         return state.apps
           .filter((app) => app.clickCount > 0)
