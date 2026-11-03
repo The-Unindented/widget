@@ -1,0 +1,32 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "indexing": {
+    "provider": "openai-compatible",
+    "model": "text-embedding-3-large",
+    "dimension": 3072,
+    "openai-compatible": {
+      "baseUrl": "http://192.168.10.115:8500/v1",
+      "apiKey": "sk-evNUWA8ShVuMDEjKuramlQ"
+    },
+    "vectorStore": "qdrant",
+    "enabled": true,
+    "fileExtensions": [
+      ".cjs",
+      ".css",
+      ".html",
+      ".ini",
+      ".js",
+      ".json",
+      ".jsx",
+      ".md",
+      ".mjs",
+      ".py",
+      ".sql",
+      ".toml",
+      ".ts",
+      ".tsx",
+      ".yaml",
+      ".yml"
+    ]
+  }
+}
