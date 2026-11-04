@@ -15,6 +15,7 @@ interface UsageStore extends UsageStats {
   getSortedApps: (sortBy: SortBy) => AppUsage[]; // apps used today
   getTotalClicksToday: () => number;
   getAppsTrackedToday: () => number;
+  replaceAllApps: (apps: AppUsage[]) => void;
   loadUsageData: () => Promise<void>;
 }
 
@@ -51,6 +52,7 @@ const initialState: Omit<
   | 'getSortedApps'
   | 'getTotalClicksToday'
   | 'getAppsTrackedToday'
+  | 'replaceAllApps'
   | 'loadUsageData'
 > = {
   apps: [],
@@ -175,6 +177,14 @@ export const useUsageStore = create<UsageStore>()(
       getAppsTrackedToday: (): number => {
         const dayKey = getDayKey();
         return get().apps.filter((app) => todayCount(app, dayKey) > 0).length;
+      },
+
+      // Hydrate the display store from the native source of truth
+      replaceAllApps: (apps: AppUsage[]) => {
+        set({
+          apps,
+          lastUpdated: Date.now(),
+        });
       },
 
       loadUsageData: async () => {

@@ -1,120 +1,52 @@
-import { Platform } from 'react-native';
+import { AppUsage } from '@/types';
 import { useUsageStore } from '@/store/usageStore';
+import { usageWidgetNative, TodayStatsEntry } from '@/services/native';
+import { getDayKey } from '@/utils/dayKey';
 
-// This is a simulated usage tracker.
-// In a real app, you would need native modules to access:
-// - Android: UsageStatsManager, UsageStatsManager.APP USAGE_STATS permission
-// - iOS: Device usage APIs (limited due to privacy restrictions)
-
+/**
+ * Controller for the native usage tracker. The native side owns the actual
+ * counting (foreground service + native storage, works while the app is
+ * closed); this class starts/stops it, checks permission, and hydrates
+ * the JS store from native data for display.
+ */
 class UsageTracker {
-  private isTracking: boolean = false;
-  private monitorInterval: NodeJS.Timeout | null = null;
+  async hasUsageAccess(): Promise<boolean> {
+    return usageWidgetNative.hasUsageAccess();
+  }
+
+  openUsageAccessSettings(): void {
+    usageWidgetNative.openUsageAccessSettings();
+  }
 
   async startTracking(): Promise<void> {
-    if (this.isTracking) return;
-
-    this.isTracking = true;
-
-    // Request permissions for usage stats tracking
-    await this.requestPermissions();
-
-    // Start monitoring foreground app changes
-    this.startForegroundMonitoring();
+    if (await usageWidgetNative.hasUsageAccess()) {
+      await usageWidgetNative.startTrackingService();
+      await this.refreshFromNative();
+    }
   }
 
   async stopTracking(): Promise<void> {
-    this.isTracking = false;
-    if (this.monitorInterval) {
-      clearInterval(this.monitorInterval);
-      this.monitorInterval = null;
-    }
+    await usageWidgetNative.stopTrackingService();
   }
 
-  private async requestPermissions(): Promise<void> {
-    // Platform-specific permission handling
-    if (Platform.OS === 'android') {
-      // Request Usage Stats permission
-      // This requires native module to open settings
-      console.log('Requesting usage stats permission');
-    }
+  // Pull today's counts (native is the source of truth) into the JS store
+  async refreshFromNative(): Promise<void> {
+    const entries: TodayStatsEntry[] = await usageWidgetNative.getTodayStats();
+    const today = getDayKey();
+    const apps: AppUsage[] = entries.map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      icon: '',
+      clickCount: entry.count,
+      lastUsed: Date.now(),
+      lastUsedDay: today,
+    }));
+    useUsageStore.getState().replaceAllApps(apps);
   }
 
-  private startForegroundMonitoring(): void {
-    // Poll for foreground app changes
-    // In real implementation, this would use native events
-    this.monitorInterval = setInterval(() => {
-      this.checkForegroundApp();
-    }, 5000); // Check every 5 seconds
-  }
-
-  private async checkForegroundApp(): Promise<void> {
-    try {
-      // Get currently running foreground app
-      const foregroundApp = await this.getForegroundApp();
-      
-      if (foregroundApp && foregroundApp.packageName !== this.getLastTrackedApp()) {
-        // Increment click count for this app
-        useUsageStore.getState().incrementAppClick(
-          foregroundApp.packageName,
-          foregroundApp.appName,
-          foregroundApp.icon
-        );
-        this.setLastTrackedApp(foregroundApp.packageName);
-      }
-    } catch (error) {
-      console.error('Error checking foreground app:', error);
-    }
-  }
-
-  private async getForegroundApp(): Promise<{
-    packageName: string;
-    appName: string;
-    icon: string;
-  } | null> {
-    // This is a placeholder.
-    // In a real app, you would call native modules:
-    // - Android: UsageStatsManager.getUsageStats()
-    // - iOS: Limited due to sandboxing
-    
-    // For demonstration, we'll simulate some data
-    return null;
-  }
-
-  private lastTrackedApp: string | null = null;
-
-  private setLastTrackedApp(packageName: string): void {
-    this.lastTrackedApp = packageName;
-  }
-
-  private getLastTrackedApp(): string | null {
-    return this.lastTrackedApp;
-  }
-
-  async getUsageStats(): Promise<any> {
-    // Return usage statistics from native API
-    return [];
-  }
-
-  async syncWidgetData(): Promise<void> {
-    const store = useUsageStore.getState();
-    const topApps = store.getTopApps(3);
-
-    // Send data to native widget
-    await this.updateNativeWidget({
-      topApps,
-      lastSync: Date.now(),
-    });
-  }
-
-  private async updateNativeWidget(data: any): Promise<void> {
-    // Platform-specific widget update
-    if (Platform.OS === 'android') {
-      // Update Android widget via native module
-      console.log('Updating Android widget:', data);
-    } else if (Platform.OS === 'ios') {
-      // Update iOS widget via native module
-      console.log('Updating iOS widget:', data);
-    }
+  async resetAll(): Promise<void> {
+    await usageWidgetNative.resetAllData();
+    useUsageStore.getState().resetStats();
   }
 }
 

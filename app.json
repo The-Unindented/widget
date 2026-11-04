@@ -10,7 +10,8 @@
     },
     "plugins": [
       "expo-asset",
-      "expo-font"
+      "expo-font",
+      "./plugins/usage-widget"
     ]
   }
 }

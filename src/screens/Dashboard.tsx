@@ -1,25 +1,55 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, AppState } from 'react-native';
 import { useUsageStore } from '@/store/usageStore';
 import { AppCard } from '@/components/AppCard';
 import { StatCard } from '@/components/StatCard';
 import { usageTracker } from '@/services/usageTracker';
 import { widgetSync } from '@/services/widgetSync';
+import { isNativeAvailable } from '@/services/native';
 import { useTheme } from '@/theme/useTheme';
 import { Palette } from '@/theme/palette';
 
 export const DashboardScreen: React.FC = () => {
-  const { getTopApps, resetStats, getTotalClicksToday, getAppsTrackedToday } =
+  const { getTopApps, getTotalClicksToday, getAppsTrackedToday } =
     useUsageStore();
   const { colors } = useTheme();
   const styles = React.useMemo(() => createStyles(colors), [colors]);
 
   React.useEffect(() => {
-    usageTracker.startTracking();
-    widgetSync.initialize();
+    const init = async () => {
+      if (isNativeAvailable()) {
+        const granted = await usageTracker.hasUsageAccess();
+        if (granted) {
+          await usageTracker.startTracking();
+        } else {
+          Alert.alert(
+            'Permission needed',
+            'To count which apps you open, enable "Usage access" for WidgetApp in the next screen, then come back.',
+            [
+              {
+                text: 'Open Settings',
+                onPress: () => usageTracker.openUsageAccessSettings(),
+              },
+              { text: 'Cancel', style: 'cancel' },
+            ]
+          );
+        }
+      }
+      widgetSync.initialize();
+    };
+
+    init();
+
+    // Refresh the display whenever the app comes back to the foreground
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        usageTracker.refreshFromNative();
+      }
+    });
 
     return () => {
-      usageTracker.stopTracking();
+      subscription.remove();
+      // The tracking service intentionally keeps running in the background
     };
   }, []);
 
@@ -31,13 +61,20 @@ export const DashboardScreen: React.FC = () => {
       'Are you sure you want to reset all app usage statistics?',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Reset', style: 'destructive', onPress: resetStats },
+        {
+          text: 'Reset',
+          style: 'destructive',
+          onPress: () => {
+            usageTracker.resetAll();
+          },
+        },
       ]
     );
   };
 
   const handleSyncWidget = async () => {
-    await usageTracker.syncWidgetData();
+    await widgetSync.manualUpdate();
+    await usageTracker.refreshFromNative();
     Alert.alert('Success', 'Widget updated successfully');
   };
 
