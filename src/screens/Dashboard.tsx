@@ -5,9 +5,14 @@ import { AppCard } from '@/components/AppCard';
 import { StatCard } from '@/components/StatCard';
 import { usageTracker } from '@/services/usageTracker';
 import { widgetSync } from '@/services/widgetSync';
+import { useTheme } from '@/theme/useTheme';
+import { Palette } from '@/theme/palette';
 
 export const DashboardScreen: React.FC = () => {
-  const { apps, totalClicks, getTopApps, resetStats } = useUsageStore();
+  const { getTopApps, resetStats, getTotalClicksToday, getAppsTrackedToday } =
+    useUsageStore();
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => createStyles(colors), [colors]);
 
   React.useEffect(() => {
     usageTracker.startTracking();
@@ -51,29 +56,25 @@ export const DashboardScreen: React.FC = () => {
       </View>
 
       <View style={styles.statsContainer}>
-        <StatCard
-          title="Total Clicks"
-          value={totalClicks}
-          subtitle="All time"
-        />
+        <StatCard title="Total Clicks" value={getTotalClicksToday()} subtitle="Today" />
         <StatCard
           title="Apps Tracked"
-          value={apps.length}
-          subtitle="Used at least once"
+          value={getAppsTrackedToday()}
+          subtitle="Used today"
         />
       </View>
 
       <View style={styles.topAppsContainer}>
-        <Text style={styles.sectionTitle}>Top 3 Most Used</Text>
+        <Text style={styles.sectionTitle}>Top 3 Today</Text>
         {topApps.length > 0 ? (
           topApps.map((app, index) => (
             <AppCard key={app.id} app={app} rank={index + 1} />
           ))
         ) : (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateText}>No usage data yet</Text>
+            <Text style={styles.emptyStateText}>No apps opened today yet</Text>
             <Text style={styles.emptyStateSubtext}>
-              Start using apps to see your top 3 here
+              Open some apps and your top 3 for today will show up here
             </Text>
           </View>
         )}
@@ -82,96 +83,97 @@ export const DashboardScreen: React.FC = () => {
       <View style={styles.infoContainer}>
         <Text style={styles.infoTitle}>How it works</Text>
         <Text style={styles.infoText}>
-          This app tracks which apps you open on your phone. The top 3 most
-          used apps will appear on your home screen widget. Only apps you've
-          used at least once are shown.
+          This app tracks which apps you open each day. The top 3 most-used apps
+          for today appear on your home screen widget. Counts reset
+          automatically at midnight.
         </Text>
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  header: {
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  headerButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  headerButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#007AFF',
-    borderRadius: 6,
-  },
-  headerButtonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  resetText: {
-    color: '#FF3B30',
-    backgroundColor: '#FFF0F0',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    padding: 16,
-    gap: 8,
-  },
-  topAppsContainer: {
-    padding: 16,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 40,
-  },
-  emptyStateText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#999',
-    marginBottom: 8,
-  },
-  emptyStateSubtext: {
-    fontSize: 14,
-    color: '#BBB',
-    textAlign: 'center',
-  },
-  infoContainer: {
-    padding: 16,
-    marginTop: 8,
-  },
-  infoTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  infoText: {
-    fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: c.background,
+    },
+    header: {
+      padding: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      backgroundColor: c.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: c.textPrimary,
+    },
+    headerButtons: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    headerButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      backgroundColor: c.primary,
+      borderRadius: 6,
+    },
+    headerButtonText: {
+      color: c.onPrimary,
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    resetText: {
+      color: c.danger,
+      backgroundColor: c.dangerSurface,
+    },
+    statsContainer: {
+      flexDirection: 'row',
+      padding: 16,
+      gap: 8,
+    },
+    topAppsContainer: {
+      padding: 16,
+    },
+    sectionTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: c.textPrimary,
+      marginBottom: 16,
+    },
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 40,
+    },
+    emptyStateText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: c.hint,
+      marginBottom: 8,
+    },
+    emptyStateSubtext: {
+      fontSize: 14,
+      color: c.hint,
+      textAlign: 'center',
+    },
+    infoContainer: {
+      padding: 16,
+      marginTop: 8,
+    },
+    infoTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: c.textPrimary,
+      marginBottom: 8,
+    },
+    infoText: {
+      fontSize: 14,
+      color: c.textSecondary,
+      lineHeight: 20,
+    },
+  });

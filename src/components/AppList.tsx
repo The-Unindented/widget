@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { AppUsage, SortBy } from '@/types';
 import { AppCard } from '@/components/AppCard';
+import { useTheme } from '@/theme/useTheme';
+import { Palette } from '@/theme/palette';
 
 interface AppListProps {
   apps: AppUsage[];
@@ -16,6 +18,9 @@ export const AppList: React.FC<AppListProps> = ({
   onSortChange,
   onAppPress,
 }) => {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => createStyles(colors), [colors]);
+
   const sortOptions: { label: string; value: SortBy }[] = [
     { label: 'Most Clicked', value: 'clicks' },
     { label: 'Recent', value: 'recent' },
@@ -25,7 +30,7 @@ export const AppList: React.FC<AppListProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.sortContainer}>
-        <Text style={styles.sectionTitle}>All Apps</Text>
+        <Text style={styles.sectionTitle}>Today's Apps</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.sortButtons}>
             {sortOptions.map((option) => (
@@ -62,9 +67,9 @@ export const AppList: React.FC<AppListProps> = ({
         ))}
         {apps.length === 0 && (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateText}>No apps tracked yet</Text>
+            <Text style={styles.emptyStateText}>No apps used today</Text>
             <Text style={styles.emptyStateSubtext}>
-              Start using your phone to see app statistics here
+              Apps you open today will appear here
             </Text>
           </View>
         )}
@@ -73,61 +78,62 @@ export const AppList: React.FC<AppListProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  sortContainer: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-    backgroundColor: '#FFFFFF',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 12,
-  },
-  sortButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  sortButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#F0F0F0',
-  },
-  sortButtonActive: {
-    backgroundColor: '#007AFF',
-  },
-  sortButtonText: {
-    color: '#666',
-    fontWeight: '500',
-  },
-  sortButtonTextActive: {
-    color: '#FFFFFF',
-  },
-  list: {
-    flex: 1,
-    padding: 16,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  emptyStateText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#999',
-    marginBottom: 8,
-  },
-  emptyStateSubtext: {
-    fontSize: 14,
-    color: '#BBB',
-    textAlign: 'center',
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: c.background,
+    },
+    sortContainer: {
+      padding: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: c.border,
+      backgroundColor: c.surface,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: c.textPrimary,
+      marginBottom: 12,
+    },
+    sortButtons: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    sortButton: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      backgroundColor: c.fill,
+    },
+    sortButtonActive: {
+      backgroundColor: c.primary,
+    },
+    sortButtonText: {
+      color: c.textSecondary,
+      fontWeight: '500',
+    },
+    sortButtonTextActive: {
+      color: c.onPrimary,
+    },
+    list: {
+      flex: 1,
+      padding: 16,
+    },
+    emptyState: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 60,
+    },
+    emptyStateText: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: c.hint,
+      marginBottom: 8,
+    },
+    emptyStateSubtext: {
+      fontSize: 14,
+      color: c.hint,
+      textAlign: 'center',
+    },
+  });

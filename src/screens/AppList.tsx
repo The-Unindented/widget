@@ -1,11 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { AppList } from '@/components/AppList';
 import { useUsageStore } from '@/store/usageStore';
-import { SortBy } from '@/types';
+import { useTheme } from '@/theme/useTheme';
+import { Palette } from '@/theme/palette';
 
 export const AppListScreen: React.FC = () => {
-  const { apps, sortBy, setSortBy, getSortedApps } = useUsageStore();
+  const { sortBy, setSortBy, getSortedApps } = useUsageStore();
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => createStyles(colors), [colors]);
 
   const sortedApps = getSortedApps(sortBy);
 
@@ -20,9 +23,10 @@ export const AppListScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: c.background,
+    },
+  });

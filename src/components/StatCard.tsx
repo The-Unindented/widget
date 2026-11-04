@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { AppUsage } from '@/types';
+import { useTheme } from '@/theme/useTheme';
+import { Palette } from '@/theme/palette';
 
 interface StatCardProps {
   title: string;
@@ -17,6 +18,9 @@ export const StatCard: React.FC<StatCardProps> = ({
   style,
   children,
 }) => {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => createStyles(colors), [colors]);
+
   return (
     <View style={[styles.card, style]}>
       <Text style={styles.title}>{title}</Text>
@@ -27,34 +31,35 @@ export const StatCard: React.FC<StatCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    flex: 1,
-    margin: 8,
-  },
-  title: {
-    fontSize: 12,
-    color: '#666',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 8,
-  },
-  value: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  subtitle: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 4,
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    card: {
+      backgroundColor: c.surface,
+      padding: 16,
+      borderRadius: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+      flex: 1,
+      margin: 8,
+    },
+    title: {
+      fontSize: 12,
+      color: c.textSecondary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 8,
+    },
+    value: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: c.textPrimary,
+    },
+    subtitle: {
+      fontSize: 12,
+      color: c.hint,
+      marginTop: 4,
+    },
+  });

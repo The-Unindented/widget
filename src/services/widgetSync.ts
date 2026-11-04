@@ -1,4 +1,6 @@
 import { AppUsage, WidgetData } from '@/types';
+import { useUsageStore } from '@/store/usageStore';
+import { getDayKey } from '@/utils/dayKey';
 
 class WidgetSync {
   private updateInterval: NodeJS.Timeout | null = null;
@@ -23,13 +25,14 @@ class WidgetSync {
   }
 
   private async getWidgetData(): Promise<WidgetData> {
-    // Get data from store
-    const { getTopApps } = require('@/store/usageStore').useUsageStore.getState();
+    // Get today's top apps from the store
+    const { getTopApps } = useUsageStore.getState();
     const topApps = getTopApps(3);
 
     return {
       topApps,
       lastSync: Date.now(),
+      day: getDayKey(),
     };
   }
 

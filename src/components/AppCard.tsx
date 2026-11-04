@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ViewStyle } from 'react-native';
 import { AppUsage } from '@/types';
+import { useTheme } from '@/theme/useTheme';
+import { Palette } from '@/theme/palette';
 
 interface AppCardProps {
   app: AppUsage;
@@ -10,6 +12,8 @@ interface AppCardProps {
 }
 
 export const AppCard: React.FC<AppCardProps> = ({ app, rank, onPress, style }) => {
+  const { colors } = useTheme();
+  const styles = React.useMemo(() => createStyles(colors), [colors]);
   const Container = onPress ? TouchableOpacity : View;
 
   return (
@@ -46,64 +50,65 @@ export const AppCard: React.FC<AppCardProps> = ({ app, rank, onPress, style }) =
   );
 };
 
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  rankContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  rank: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#666',
-    marginRight: 12,
-    minWidth: 24,
-  },
-  iconContainer: {
-    marginRight: 12,
-  },
-  icon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-  },
-  iconPlaceholder: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: '#E0E0E0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  iconText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#666',
-  },
-  details: {
-    flex: 1,
-  },
-  appName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-  },
-  clickCount: {
-    fontSize: 14,
-    color: '#666',
-  },
-});
+const createStyles = (c: Palette) =>
+  StyleSheet.create({
+    card: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: c.surface,
+      padding: 16,
+      borderRadius: 12,
+      marginBottom: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    rankContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: 12,
+    },
+    rank: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: c.textSecondary,
+      marginRight: 12,
+      minWidth: 24,
+    },
+    iconContainer: {
+      marginRight: 12,
+    },
+    icon: {
+      width: 40,
+      height: 40,
+      borderRadius: 8,
+    },
+    iconPlaceholder: {
+      width: 40,
+      height: 40,
+      borderRadius: 8,
+      backgroundColor: c.fill,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    iconText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: c.textSecondary,
+    },
+    details: {
+      flex: 1,
+    },
+    appName: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: c.textPrimary,
+      marginBottom: 4,
+    },
+    clickCount: {
+      fontSize: 14,
+      color: c.textSecondary,
+    },
+  });
